@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+
+  <body>
+    <div class="outer-container">
+      <div class="imgDiv">
+        <img src="/shin-ye-eun.png" class="img-1" alt="front img" />
+      </div>
+      <div class="login-container">
+        <form action="/login" method="post">
+          <h2 class="display-5 intro">Welcome to Voices,</h2>
+          <p class="display-6 details text-secondary">Enter your details</p>
+          <input
+            class="form-control form-control-lg"
+            type="text"
+            placeholder="Email"
+            aria-label=".form-control-lg example"
+            name="username"
+          />
+          <input
+            class="form-control form-control-lg"
+            type="password"
+            placeholder="Password"
+            aria-label=".form-control-lg example"
+            name="password"
+          />
+          <a class="forgotPass" href="">Forgot Password?</a>
+          <button type="submit" class="btn btn-dark btn-lg">Log in</button>
+        </form>
+      </div>
+    </div>
+    <script src="/js/jquery.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+  </body>
+</html>
