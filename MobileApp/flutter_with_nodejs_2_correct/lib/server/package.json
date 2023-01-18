@@ -9,6 +9,7 @@
   "author": "Nishant and shaurya",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "nodemailer": "^6.9.0",
     "ws": "^8.12.0"
