@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const body_parser = require("body-parser");
+const sendMail = require("./controllers/sendMail");
+require('dotenv').config();
+const PORT = process.env.PORT || 3000;
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -28,6 +31,8 @@ app.post('/login', (req, res) => {
     res.redirect('/login');
 });
 
-app.listen(3000, () => {
-    console.log("Listening to port 3000");
+app.get('/login/sendMail', sendMail);
+
+app.listen(PORT, () => {
+    console.log(`Listening to port ${PORT}`);
 });
