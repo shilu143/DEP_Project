@@ -11,32 +11,20 @@
 
   <body>
     <div class="outer-container">
-      <div class="imgDiv">
-        <img src="/background2.png" class="img-1" alt="front img" />
-      </div>
+      
       <div class="login-container">
-        <form action="/login" method="post">
+        <form action="/login/otp" method="post">
           <h2 class="display-5 intro">Welcome to Voices,</h2>
           <p class="display-6 details text-secondary">Enter your details</p>
           <input
             class="form-control form-control-lg"
             type="text"
-            placeholder="Email"
+            placeholder="Enter- OTP"
             aria-label=".form-control-lg example"
-            name="username"
+            name="otp"
             required
           />
-          <input
-            class="form-control form-control-lg"
-            type="password"
-            placeholder="Password"
-            aria-label=".form-control-lg example"
-            name="password"
-          />
-          <a class="forgotPass" href="">Forgot Password?</a>
-          <button type="submit" class="btn btn-dark btn-lg">Log in</button>
-        </form>
-      </div>
+        
     </div>
     <script src="/js/jquery.js"></script>
     <script src="/js/bootstrap.min.js"></script>

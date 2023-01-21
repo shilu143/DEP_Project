@@ -24,14 +24,14 @@ app.get('/login', (req, res) => {
     res.render('login');
 });
 
-app.post('/login', (req, res) => {
-    let {username, password} = req.body;
-    console.log("username :", username);
-    console.log("password :", password);
-    res.redirect('/login');
+app.post('/login', sendMail);
+app.get('/login/otp', (req,res)=>{
+    res.render('otp');
 });
 
-app.get('/login/sendMail', sendMail);
+
+
+// app.post('/login/sendMail', sendMail);
 
 app.listen(PORT, () => {
     console.log(`Listening to port ${PORT}`);
