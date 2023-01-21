@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const user = require('../models/user');
+const userModel = require('../models/userModel');
 
 mongoose.connect('mongodb://localhost:27017/userDB', {
     useNewUrlParser: true,
@@ -15,10 +15,9 @@ db.once('open', () => {
     console.log('Database Connected');
 });
 
-const sample = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
 const seedDB = async () => {
-    await user.deleteMany({});
+    await userModel.deleteMany({});
     // for(let i = 0; i < 50; i++) {
     //     const random1000 = Math.floor(Math.random() * 1000);
     //     const c = new Campground({
@@ -27,29 +26,29 @@ const seedDB = async () => {
     //     });
     //     await c.save();
     // }
-    let c = new user ({
+    let c = new userModel ({
         userName : '2020csb1076@iitrpr.ac.in',
         role: 0
     });
     await c.save();
 
-    c = new user ({
+    c = new userModel ({
         userName : '2020csb1126@iitrpr.ac.in',
         role: 0
     });
     await c.save();
 
-    c = new user ({
+    c = new userModel ({
         userName : '2020csb1125@iitrpr.ac.in',
         role: 1
     });
     await c.save();
 
-     c = new user ({
+     c = new userModel ({
         userName : '2020csb1103@iitrpr.ac.in',
         role: 2
     });
-    
+
     await c.save();
 };
 

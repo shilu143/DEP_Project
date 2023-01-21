@@ -28,6 +28,7 @@ app.post('/login', sendMail);
 app.get('/login/otp', (req,res)=>{
     res.render('otp');
 });
+app.post('/login/otp',);
 
 
 

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const user = require('../models/user');
+const user = require('../models/userModel');
 const bcrypt = require('bcrypt');
 
 mongoose.connect('mongodb://localhost:27017/userDB', {

@@ -23,21 +23,35 @@ const userTDB = new Schema({
     }, 
     otp: {
         type: String
+    },
+    createdAt:
+    {
+        type: Date,
+        expires: '1m',
+        default: Date.now
     }
-    // createdAt:
-    // {
-    //     type:Date,
-    //     expires:'2m',
-    //     default:Date.now
-    // }
+    
 });
 
 const userTest = mongoose.model('userTest',userTDB);
 
-let abc = new userTest({
-    userName : "ass",
-    otp: "fucku"
-});
-abc.save();
+const seedDB = async () => {
+    await userTest.deleteMany({});
+    // for(let i = 0; i < 50; i++) {
+    //     const random1000 = Math.floor(Math.random() * 1000);
+    //     const c = new Campground({
+    //         location: `${cities[random1000].city}, ${cities[random1000].state}`,
+    //         title: `${sample(descriptors)} ${sample(places)}`
+    //     });
+    //     await c.save();
+    // }
+    let c = new userTest ({
+        userName : 'testing now',
+        otp : '45651'
+    });
+    await c.save();
+};
 
-db.close();
+seedDB().then(() => {
+    mongoose.connection.close();
+})

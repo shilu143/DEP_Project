@@ -9,13 +9,9 @@ const userDB = new Schema({
     role: {
         type: Number,
         required: true
-    },   
-    otp: {
-        type: String,
-        expires: 20
     }
 });
 
-const user = mongoose.model('user',userDB);
+const userModel = mongoose.model('user',userDB);
 
-module.exports = user;
+module.exports = userModel;
