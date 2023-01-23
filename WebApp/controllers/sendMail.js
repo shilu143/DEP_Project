@@ -5,22 +5,7 @@ const userModel = require('../models/userModel');
 const otpModel = require('../models/otpModel');
 const saltRounds = 10;
 
-mongoose.connect('mongodb://localhost:27017/userDB', {
-    useNewUrlParser: true,
-    // useCreateIndex: true,
-    // useUnifiedTopology: true
-});
-// mongoose.set('strictQuery', true);
-
-const db = mongoose.connection;
-
-db.on('error', console.error.bind(console, "Connection Error : "));
-db.once('open', () => {
-    console.log('Database Connected');
-});
-
-
-const sendMail = async (req, res) => {
+const sendMail = async (req, res,next) => {
     let targetEmail = req.body.username;
     let targetRole = 0;
     let newHash;
@@ -29,28 +14,16 @@ const sendMail = async (req, res) => {
     await bcrypt.hash(String(OTP), saltRounds).then(function(hash) {
         newHash = hash;
     });
-    await userModel.findOne({userName:targetEmail,role:targetRole})
-    .then( result => {
-        if(result == null) {
-            res.send("Sorry and fuck you");
-        }
-    })
-    .catch(err => {
-        res.send("Sorry and fuck u");
-    })
     
-    // console.log(findUser);
-    // if(findUser == null){
-    //     res.send("sorry");
-    // }
+    
     const newEntry = new otpModel({
         userName: targetEmail,
         otp: newHash
     });
 
     await newEntry.save();
-    // const result = await otpModel.findOneAndUpdate({userName : targetEmail}, {otp : newHash}, {new : true});
-    // console.log(result)
+
+    // await otpModel.findOneAndUpdate({userName:targetEmail},{userName:targetEmail,otp:newHash});
 
     const msg = {
         from: "Email Verification",
@@ -80,9 +53,9 @@ const sendMail = async (req, res) => {
             res.send("<h1>Message sent successfully :)</h1>");
         }
   });
-
-  db.close();
+  res.cookie('userName',targetEmail);
   res.redirect('/login/otp');
+
 };
 
 module.exports = sendMail;
