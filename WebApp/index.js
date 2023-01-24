@@ -45,12 +45,13 @@ app.get('/login', (req, res) => {
 
 app.post('/login',async (req,res,next)=>{
     const targetEmail = req.body.username;
-    const role = req.body.role;
+    const role = Number(req.body.role);
     
-    await userModel.findOne({userName:targetEmail})
+    await userModel.findOne({userName:targetEmail, role : role})
     .then( result => {
         if(!result){
-            next(new Error("wrong Email"));
+            res.send("User Not Found");
+            // next(new Error("wrong Email"));
         }else{
             sendMail(req,res);
 
@@ -63,12 +64,18 @@ app.post('/login',async (req,res,next)=>{
     })
 
 });
+
+app.get('/dashboard',(req,res)=>{
+    let role = req.cookies.role;
+    res.render('dashboard', {role});
+});
 app.get('/login/otp', (req,res)=>{
     // console.log(req.cookies);
     res.render('otp');
 });
 app.post('/login/otp',async (req,res)=>{
     verifyOtp(req,res);
+
 });
 
 

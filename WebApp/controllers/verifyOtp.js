@@ -21,10 +21,13 @@ const verifyOtp = async (req,res)=>{
 
     
     await bcrypt.compare(otp,String(result.otp)).then(_result=>{
-        console.log(_result);
+        console.log("Login result : ",_result);
+        res.cookie("loggedin", "true");
+        res.redirect('/dashboard');
     });
     
-    res.send("Otp Checking");
+    // res.send("Otp Checking");
+    
 
 
 }
