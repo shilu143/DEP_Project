@@ -2,16 +2,20 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userDB = new Schema({
-    userName: {
+    advId: {
         type: String,
         required: true
     },
-    role: {
-        type: Number,
+    studId: {
+        type: String,
+        required: true
+    },
+    courseId: {
+        type: String,
         required: true
     }
 });
 
-const userModel = mongoose.model('userModel',userDB);
+const userModel = mongoose.model('reqAdv',userDB);
 
 module.exports = userModel;
