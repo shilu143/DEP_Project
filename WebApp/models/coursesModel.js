@@ -9,6 +9,10 @@ const CourseDB = new Schema({
     courseId:{
         type:String,
         required :true
+    },
+    instId : {
+        type: String,
+        required: true
     }
 });
 

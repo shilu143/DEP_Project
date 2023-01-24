@@ -3,8 +3,26 @@ const { Server } = require('ws');
 const sendMail = require("./controller/sendMail");
 const emailValidator = require('deep-email-validator');
 const validator = require("node-email-validation");
+const mongoose = require('mongoose');
+const userModel = require('./models/userModel');
+const otpverify = require('./controller/otpverify')
+
+let yo = -1;
 
 require("dotenv").config();
+
+mongoose.connect('mongodb://localhost:27017/userDB', {
+    useNewUrlParser: true,
+    // useCreateIndex: true,
+    // useUnifiedTopology: true
+});
+
+const db = mongoose.connection;
+
+db.on('error', console.error.bind(console, "Connection Error : "));
+db.once('open', () => {
+    console.log('Database Connected');
+});
 
 
 const PORT = process.env.PORT || 3000; //port for https
@@ -25,15 +43,50 @@ async function isEmailValid(email) {
     return emailValidator.validate(email)
 }
 
+async function checkindatabase(email){
+    console.log('check');
+    await userModel.findOne({userName:email})
+    .then( result => {
+        console.log(result);
+        if(result=== null){ 
+            console.log('not found');
+            yo= 0;  
+        }else{
+            console.log('found');  
+            sendMail(email);
+            yo= 1;           
+        }        
+    })
+    .catch(err => {
+        console.log(err);
+        res.send("Sorry and Mail not sent");
+    })
+}
+
 wss.on('connection', function(ws, req) {
     ws.on('message', message => {
         var dataString = message.toString();
-        console.log("shilu");
+        /* console.log("shilu"); */
         console.log(dataString);        
-        let yo=dataString;
-        console.log(validator.is_email_valid(yo)); 
+        /* console.log(validator.is_email_valid(yo));  */
 
         /* ws.send("ashish"); */
-        sendMail(dataString);
+        if(validator.is_email_valid(dataString)) {
+             checkindatabase(dataString).then(
+                function shaurya(){
+                    console.log(yo);
+                    console.log('random');
+                    ws.send(yo);
+                }
+             ); 
+            /* console.log(yo); */
+                   
+        }
+        else{
+            var verify = dataString.split(" ");
+            console.log(verify[1]);
+            console.log(`otp found`);   
+            otpverify(verify[1],verify[0]);         
+        }
     })
 });

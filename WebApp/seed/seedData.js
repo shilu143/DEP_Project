@@ -7,6 +7,7 @@ const requestAdvisor = require('../models/requestsAdvisor');
 const studentModel = require('../models/studentModel');
 const takenModel = require('../models/takenModel');
 const courseModel = require('../models/coursesModel');
+const statusModel = require('../models/statusModel');
 
 
 mongoose.connect('mongodb://localhost:27017/userDB', {
@@ -23,6 +24,11 @@ db.once('open', () => {
     console.log('Database Connected');
 });
 
+const allStudents = ["2020csb1076@iitrpr.ac.in", "2020csb1126@iitrpr.ac.in"];
+const allCourses = ["cs301", "cs302", "cs303", "cs304", "cs305"];
+const allCourseName = ["DEP", "Software Engineering", "Theory of Computation", "Computer Networks", "Algorithm Design"];
+const allInstId = ["2020csb1103@iitrpr.ac.in", "2020csb1103@iitrpr.ac.in", "2020csb1103@iitrpr.ac.in", "nishantgta707@gmail.com","nishantgta707@gmail.com",
+]
 
 const seedDB = async () => {
     await userModel.deleteMany({});
@@ -33,6 +39,7 @@ const seedDB = async () => {
     await studentModel.deleteMany({});
     await takenModel.deleteMany({});
     await courseModel.deleteMany({});
+    await statusModel.deleteMany({});
     // for(let i = 0; i < 50; i++) {
     //     const random1000 = Math.floor(Math.random() * 1000);
     //     const c = new Campground({
@@ -74,36 +81,31 @@ const seedDB = async () => {
 
     c = new instructor({
         instId :"2020csb1103@iitrpr.ac.in",
-        instName : "Nishant Verma",
-        courseId: "cs301"
+        instName : "Nishant Verma"
     });
     await c.save();
 
     c = new instructor({
         instId :"2020csb1103@iitrpr.ac.in",
-        instName : "Nishant Verma",
-        courseId: "cs302"
+        instName : "Nishant Verma"
     });
     await c.save();
 
     c = new instructor({
         instId :"2020csb1103@iitrpr.ac.in",
-        instName : "Nishant Verma",
-        courseId: "cs303"
+        instName : "Nishant Verma"
     });
     await c.save();
 
     c = new instructor({
         instId :"nishantgta707@gmail.com",
-        instName : "NishantGTA",
-        courseId: "cs304"
+        instName : "NishantGTA"
     });
     await c.save();
 
     c = new instructor({
         instId :"nishantgta707@gmail.com",
-        instName : "NishantGTA",
-        courseId: "cs305"
+        instName : "NishantGTA"
     });
     await c.save();
 
@@ -123,54 +125,38 @@ const seedDB = async () => {
 
     c = new courseModel({
         courseName: "DEP",
-        courseId: "cs301"
+        courseId: "cs301",
+        instId: "2020csb1103@iitrpr.ac.in"
     });
     await c.save();
 
     c = new courseModel({
         courseName: "Software Eng.",
-        courseId: "cs302"
+        courseId: "cs302",
+        instId: "2020csb1103@iitrpr.ac.in"
     });
     await c.save();
 
     c = new courseModel({
-        courseName: "Thery of Comp.",
-        courseId: "cs303"
+        courseName: "Theory of Comp.",
+        courseId: "cs303",
+        instId: "2020csb1103@iitrpr.ac.in"
     });
     await c.save();
 
     c = new courseModel({
         courseName: "Computer Networks",
-        courseId: "cs304"
+        courseId: "cs304",
+        instId: "nishantgta707@gmail.com"
     });
     await c.save();
 
     c = new courseModel({
         courseName: "Algorithm Design",
-        courseId: "cs305"
+        courseId: "cs305",
+        instId: "nishantgta707@gmail.com"
     });
     await c.save();
-
-    c = new requestIns({
-        instId: "2020csb1103@iitrpr.ac.in",
-        studId : "2020csb1076@iitrpr.ac.in",
-        courseId :"cs301"
-    });
-    await c.save();
-    c = new requestIns({
-        instId: "2020csb1103@iitrpr.ac.in",
-        studId : "2020csb1076@iitrpr.ac.in",
-        courseId :"cs302"
-    });
-    await c.save();
-    
-    c = new requestIns({
-        instId: "2020csb1103@iitrpr.ac.in",
-        studId : "2020csb1126@iitrpr.ac.in",
-        courseId :"cs302"
-    });
-    await c.save();
-    
 
 };
 

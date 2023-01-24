@@ -3,7 +3,8 @@ import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:web_socket_channel/io.dart';
 
 class Otp_verifification extends StatefulWidget {
-  const Otp_verifification({super.key});
+  String? email = '';
+  Otp_verifification({Key? key, required this.email}) : super(key: key);
 
   @override
   State<Otp_verifification> createState() => _Otp_verifificationState();
@@ -22,14 +23,12 @@ class _Otp_verifificationState extends State<Otp_verifification> {
       print("Error on connecting to websocket: " + e.toString());
     }
     // Send message to backend
+    msg = msg + " " + widget.email;
     channel?.sink.add(msg);
 
-    // Listen for any message from backend
     channel?.stream.listen((event) {
-      // Just making sure it is not empty
       if (event!.isNotEmpty) {
         print(event);
-        // Now only close the connection and we are done here!
         channel!.sink.close();
       }
     });
