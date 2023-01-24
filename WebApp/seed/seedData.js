@@ -158,6 +158,20 @@ const seedDB = async () => {
     });
     await c.save();
 
+
+    for(let student of allStudents) {
+        for(let idx = 0; idx < allCourses.length; idx++) {
+            c = new statusModel({
+                studentId: student,
+                courseId: allCourses[idx],
+                courseName: allCourseName[idx],
+                instId: allInstId[idx],
+                status: 0
+            });
+            await c.save();
+        }
+    }
+
 };
 
 seedDB().then(() => {
