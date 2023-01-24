@@ -13,6 +13,11 @@ const takenModel = require('./models/takenModel');
 const requestIns = require('./models/requestIns');
 const statusModel = require('./models/statusModel');
 const courseModel = require('./models/coursesModel');
+const insRequestModel = require('./models/requestIns');
+const advRequestModel = require('./models/requestsAdvisor');
+const advisorModel = require('./models/advisor');
+const statusModel = require('./models/statusModel');
+
 const PORT = process.env.PORT || 3000;
 mongoose.connect('mongodb://localhost:27017/userDB', {
     useNewUrlParser: true,
@@ -96,15 +101,98 @@ app.post('/student/dashboard', async (req, res) => {
 
 
 
-app.get('/instructor/dashboard',(req,res)=>{
-    let role = req.cookies.role;
-    res.render('instructor/dashboard', {role});
+app.get('/instructor/dashboard',async (req,res)=>{
+    let role = Number(req.cookies.role);
+    let userName = req.cookies.userName;
+
+    const data = await insRequestModel.find({insId:userName}).then(
+        (requests) => {
+            console.log(requests);
+            res.render('instructor/dashboard', {requests});
+        }
+    );
 });
 
-app.get('/advisor/dashboard',(req,res)=>{
-    let role = req.cookies.role;
-    res.render('advisor/dashboard', {role});
+app.post('/instructor/dashboard',async (req,res)=>{
+    let role = Number(req.cookies.role);
+    let userName = req.cookies.userName;
+
+    const studId = req.body.studId;
+    const courseId = req.body.courseId;
+    const isApproved = Number(req.body.isApproved);
+
+    // console.log(studId,courseId);
+
+
+    await insRequestModel.deleteOne({studId:studId,courseId :courseId}).then(
+        (status)=>{
+            console.log(status);
+        }
+    );
+    const advisor =  await advisorModel.findOne({});
+    
+    const advId = String(advisor.advId);
+
+    if(isApproved === 1)
+    {
+        await advRequestModel.insertMany({
+            advId :advId,
+            studId:studId,
+            courseId:courseId
+        });
+        await statusModel.findOneAndUpdate({studentId:studId,courseId:courseId},{status:2}).then(
+            (result)=>
+            {
+                console.log(result);
+            }
+        );
+    }
+
+    await insRequestModel.find({instId:userName}).then(
+        (requests) => {
+            res.render('instructor/dashboard', {requests});
+        }
+    );
 });
+
+
+app.get('/advisor/dashboard',async (req,res)=>{
+    let role = Number(req.cookies.role);
+    let userName = req.cookies.userName;
+
+    const data = await advRequestModel.find({advId:userName}).then(
+        (requests) => {
+            // console.log(requests);
+            res.render('advisor/dashboard', {requests});
+        }
+    );
+});
+
+app.post('/advisor/dashboard',async (req,res)=>{
+    let role = Number(req.cookies.role);
+    let userName = req.cookies.userName;
+
+    const studId = req.body.studId;
+    const courseId = req.body.courseId;
+
+    // console.log(studId,courseId);
+
+
+    await advRequestModel.deleteOne({studId:studId,courseId :courseId}).then(
+        (status)=>{
+            console.log(status);
+        }
+    );
+    
+
+    await advRequestModel.find({advId:userName}).then(
+        (requests) => {
+            // console.log(requests);
+            res.render('advisor/dashboard', {requests});
+        }
+    );
+});
+
 
 app.get('/login/otp', (req,res)=>{
     // console.log(req.cookies);
