@@ -151,6 +151,27 @@ const seedDB = async () => {
     });
     await c.save();
 
+    c = new requestIns({
+        instId: "2020csb1103@iitrpr.ac.in",
+        studId : "2020csb1076@iitrpr.ac.in",
+        courseId :"cs301"
+    });
+    await c.save();
+    c = new requestIns({
+        instId: "2020csb1103@iitrpr.ac.in",
+        studId : "2020csb1076@iitrpr.ac.in",
+        courseId :"cs302"
+    });
+    await c.save();
+    
+    c = new requestIns({
+        instId: "2020csb1103@iitrpr.ac.in",
+        studId : "2020csb1126@iitrpr.ac.in",
+        courseId :"cs302"
+    });
+    await c.save();
+    
+
 };
 
 seedDB().then(() => {

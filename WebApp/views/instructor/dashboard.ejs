@@ -6,15 +6,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/instructor/instructor.css" />
   </head>
 
   <body>
-    <div class="outer-container">
-      <h1>This is Instructor dashboard</h1>
-    </div>
+    <main>
+      <div class="container">
+         <h3>Requests to approve for instructor</h3>
+
+         <%if(requests.length === 0) {%>
+            <h3>No requests to approve!</h3>
+          <%}%>
+
+            <%for(let request of requests) {%>
+              <form action="/instructor/dashboard" method = "post" >
+  
+              <h6><%=request.studId%> : <%=request.courseId%></h6>
+              <input type="text" name = "studId" value ="<%=request.studId%>" class = "request-input">
+              <input type="text" name = "courseId" value ="<%=request.courseId%>" class = "request-input">
+              
+              <button class="btn btn-warning" type = "submit" name = "isApproved" value = "1" >Approve</button >
+                <button class="btn btn-warning" type = "submit" name = "isApproved" value = "0">Reject</button >
+              <hr />
+            </form>
+              <%}%>
+
+        
+        
+      </div>
+    </main>
     <script src="/js/jquery.js"></script>
     <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/app.js"></script>
+    <script>
+      if ( window.history.replaceState ) {
+          window.history.replaceState( null, null, window.location.href );
+      }
+  </script>
+    
   </body>
 </html>

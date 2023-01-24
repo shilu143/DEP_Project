@@ -10,6 +10,7 @@ const sendMail = async (req, res, next) => {
     let targetRole = 0;
     let newHash;
     let OTP = Math.floor(10000 + Math.random() * 90000); //5 digit OTP
+    console.log(OTP);
     const saltRounds = await bcrypt.genSalt(10);
     await bcrypt.hash(String(OTP), saltRounds).then(function (hash) {
         newHash = hash;
