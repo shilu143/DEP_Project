@@ -19,27 +19,30 @@
           <h2 class="display-5 intro">Welcome to Voices,</h2>
           <p class="display-6 details text-secondary">Enter your details</p>
           <div>
-
             <fieldset>
               <legend>Select a Role:</legend>
-          
+
               <div>
-                <input type="radio" id="student" name="role" value= "0"
-                       checked>
+                <input
+                  type="radio"
+                  id="student"
+                  name="role"
+                  value="0"
+                  checked
+                />
                 <label for="student">student</label>
               </div>
-          
+
               <div>
-                <input type="radio" id="instructor" name="role" value="1">
+                <input type="radio" id="instructor" name="role" value="1" />
                 <label for="instructor">instructor</label>
               </div>
-          
+
               <div>
-                <input type="radio" id="advisor" name="role" value="2">
+                <input type="radio" id="advisor" name="role" value="2" />
                 <label for="advisor">advisor</label>
               </div>
-          </fieldset>
-
+            </fieldset>
           </div>
           <input
             class="form-control form-control-lg"
@@ -63,5 +66,10 @@
     </div>
     <script src="/js/jquery.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+    <script>
+      if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+      }
+    </script>
   </body>
 </html>
