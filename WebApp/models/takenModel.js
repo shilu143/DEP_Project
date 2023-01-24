@@ -12,6 +12,6 @@ const takenDB = new Schema({
     }
 });
 
-const takenModel = mongoose.model('takenCourses',takenDB);
+const takenModel = mongoose.model('takenCourse',takenDB);
 
 module.exports = takenModel;
