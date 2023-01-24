@@ -9,7 +9,7 @@ void main() {
     initialRoute: '/',
     routes: {
       '/': ((context) => Choose_role()),
-      '/otp_verification': ((context) => Otp_verifification()),
+      '/otp_verification': ((context) => Otp_verifification(email: '')),
       '/login': ((context) => Login(text:''))
     },
   ));

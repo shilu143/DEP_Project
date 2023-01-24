@@ -9,10 +9,12 @@
   "author": "Nishant and shaurya",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "deep-email-validator": "^0.1.21",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "kickbox": "^2.0.4",
+    "mongoose": "^6.8.4",
     "node-email-validation": "^1.0.4",
     "nodemailer": "^6.9.0",
     "ws": "^8.12.0"
