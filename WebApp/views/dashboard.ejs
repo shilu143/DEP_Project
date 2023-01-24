@@ -11,19 +11,18 @@
 
   <body>
     <div class="outer-container">
-      
       <!-- <h1>This is dashboard <%=role%></h1> -->
-        <%if(Number(role) === 0) {%>
-            <h1>This is Student dashboard</h1>
-        <%}%>
-        <%if(Number(role) === 1) {%>
-            <h1>This is Instructor dashboard</h1>
-        <%}%>
-        <%if(Number(role) === 2) {%>
-            <h1>This is Advisor dashboard</h1>
-        <%}%>
+      <%if(Number(role) === 0) {%>
+      <h1>This is Student dashboard</h1>
+      <%}%> <%if(Number(role) === 1) {%>
+      <h1>This is Instructor dashboard</h1>
+      <%}%> <%if(Number(role) === 2) {%>
+      <h1>This is Advisor dashboard</h1>
+      <%}%>
     </div>
+    <div class="info"></div>
     <script src="/js/jquery.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/app.js"></script>
   </body>
 </html>
