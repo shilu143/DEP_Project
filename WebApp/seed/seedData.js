@@ -129,25 +129,25 @@ const seedDB = async () => {
 
     c = new courseModel({
         courseName: "Software Eng.",
-        courseId: "cs301"
+        courseId: "cs302"
     });
     await c.save();
 
     c = new courseModel({
         courseName: "Thery of Comp.",
-        courseId: "cs301"
+        courseId: "cs303"
     });
     await c.save();
 
     c = new courseModel({
         courseName: "Computer Networks",
-        courseId: "cs301"
+        courseId: "cs304"
     });
     await c.save();
 
     c = new courseModel({
         courseName: "Algorithm Design",
-        courseId: "cs301"
+        courseId: "cs305"
     });
     await c.save();
 
