@@ -9,11 +9,7 @@ const instructorSchema = new Schema({
     instName:{
         type:String,
         required : true
-    },
-    courseId: {
-        type:String,
-        required : true
-    },
+    }
 });
 
 const userModel = mongoose.model('instructor',instructorSchema);

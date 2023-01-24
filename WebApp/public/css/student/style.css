@@ -1,0 +1,16 @@
+.courseInfo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container {
+    margin-top: 3rem;
+    width: 60%;
+}
+
+
+.pass-input {
+     display: none;
+}

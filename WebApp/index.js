@@ -10,6 +10,8 @@ const verifyOtp = require("./controllers/verifyOtp")
 require('dotenv').config();
 const studentModel = require('./models/studentModel');
 const takenModel = require('./models/takenModel');
+const requestIns = require('./models/requestIns');
+const statusModel = require('./models/statusModel');
 const courseModel = require('./models/coursesModel');
 const PORT = process.env.PORT || 3000;
 mongoose.connect('mongodb://localhost:27017/userDB', {
@@ -68,11 +70,27 @@ app.post('/login',async (req,res,next)=>{
 app.get('/student/dashboard', async (req,res) => {
     let userName = req.cookies.userName;
     let role = req.cookies.role;
-    const data = await courseModel.find({}).then(
+    await statusModel.find({studentId: userName}).then(
         (courses) => {
             res.render('student/dashboard', {courses});
         }
     )
+});
+
+app.post('/student/dashboard', async (req, res) => {
+    const { courseId, instId } = req.body;
+    const userName = req.cookies.userName;
+    console.log(courseId, instId);
+    await statusModel.findOneAndUpdate({studentId : userName, courseId: courseId}, {status: 1}).
+    then(() => {
+        const newEntry = new requestIns({
+            instId: instId,
+            studId: userName,
+            courseId: courseId
+        })
+        newEntry.save();
+        res.redirect('/student/dashboard');
+    });
     
 });
 

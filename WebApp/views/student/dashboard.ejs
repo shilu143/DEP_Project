@@ -11,18 +11,55 @@
 
   <body>
     <header>
-      <h1>This is Student dashboard</h1>
+      <h1 class="text-center">This is Student dashboard</h1>
     </header>
     <main>
+        <!-- <h1><%=courses%></h1> -->
       <div class="container">
         <%for(let course of courses) {%>
-        <h6><%=course.courseId%> : <%=course.courseName%></h6>
-        <button class="btn btn-warning">Enroll</button>
+        <div class="courseInfo">
+          <div>
+            <h5>Course Id : <%=course.courseId.toUpperCase()%></h5>
+            <h5>Course Name : <%=course.courseName.toUpperCase()%></h5>
+          </div>
+          <div>
+            <form action="/student/dashboard" method="post">
+              <input
+                type="text"
+                class="pass-input"
+                name="courseId"
+                value="<%=course.courseId%>"
+              />
+              <input
+                type="text"
+                class="pass-input"
+                name="instId"
+                value="<%=course.instId%>"
+              />
+              <%if(Number(course.status) === 0) {%>
+                <button class="btn btn-warning">Enroll</button>
+              <%}%>
+              <%if(Number(course.status) === 1) {%>
+                <button class="btn btn-primary" disabled>Pending Instructor Approval</button>
+              <%}%>
+              <%if(Number(course.status) === 2) {%>
+                <button class="btn btn-info" disabled>Pending Advisor Approval</button>
+              <%}%>
+              <%if(Number(course.status) === 3) {%>
+                <button class="btn btn-success" disabled>Pending Advisor Approval</button>
+              <%}%>
+              <%if(Number(course.status) === -1) {%>
+                <button class="btn btn-danger" disabled>Pending Advisor Approval</button>
+              <%}%>
+            </form>
+          </div>
+        </div>
         <hr />
         <%}%>
       </div>
     </main>
     <script src="/js/jquery.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/student/app.js"></script>
   </body>
 </html>
