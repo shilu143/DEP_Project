@@ -14,6 +14,7 @@ const otpModel = require("../models/otpModel");
 const verifyOtp = async (req,res)=>{
     const otp = String(req.body.otp);
     const targetEmail = req.cookies.userName;
+    const role = Number(req.cookies.role);
     let result;
     await otpModel.findOne({userName : targetEmail}).then(_result=>{
        result = _result
@@ -23,7 +24,16 @@ const verifyOtp = async (req,res)=>{
     await bcrypt.compare(otp,String(result.otp)).then(_result=>{
         console.log("Login result : ",_result);
         res.cookie("loggedin", "true");
-        res.redirect('/dashboard');
+        if(role === 0) {
+            res.redirect('/student/dashboard');
+        }
+        else if(role === 1){
+            res.redirect('/instructor/dashboard');
+        }
+        else if(role === 2) {
+            res.redirect('/advisor/dashboard');
+        }
+        
     });
     
     // res.send("Otp Checking");

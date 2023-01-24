@@ -8,8 +8,9 @@ const userModel = require("./models/userModel");
 const cookieParser = require("cookie-parser");
 const verifyOtp = require("./controllers/verifyOtp")
 require('dotenv').config();
-
-
+const studentModel = require('./models/studentModel');
+const takenModel = require('./models/takenModel');
+const courseModel = require('./models/coursesModel');
 const PORT = process.env.PORT || 3000;
 mongoose.connect('mongodb://localhost:27017/userDB', {
     useNewUrlParser: true,
@@ -54,7 +55,6 @@ app.post('/login',async (req,res,next)=>{
             // next(new Error("wrong Email"));
         }else{
             sendMail(req,res);
-
         }
         
     })
@@ -65,10 +65,29 @@ app.post('/login',async (req,res,next)=>{
 
 });
 
-app.get('/dashboard',(req,res)=>{
+app.get('/student/dashboard', async (req,res) => {
+    let userName = req.cookies.userName;
     let role = req.cookies.role;
-    res.render('dashboard', {role});
+    const data = await courseModel.find({}).then(
+        (courses) => {
+            res.render('student/dashboard', {courses});
+        }
+    )
+    
 });
+
+
+
+app.get('/instructor/dashboard',(req,res)=>{
+    let role = req.cookies.role;
+    res.render('instructor/dashboard', {role});
+});
+
+app.get('/advisor/dashboard',(req,res)=>{
+    let role = req.cookies.role;
+    res.render('advisor/dashboard', {role});
+});
+
 app.get('/login/otp', (req,res)=>{
     // console.log(req.cookies);
     res.render('otp');

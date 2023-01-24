@@ -39,8 +39,6 @@ const sendMail = async (req, res, next) => {
         otp: newHash
     });
     if (isAvailable.length == 0 ) {
-      
-        console.log("data unavailable");
         await newEntry.save();
     }
     else
@@ -50,7 +48,6 @@ const sendMail = async (req, res, next) => {
         .then( () => {
             newEntry.save();
         }) 
-
     }
 
 
