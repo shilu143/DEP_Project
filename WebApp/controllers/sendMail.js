@@ -84,6 +84,7 @@ const sendMail = async (req, res, next) => {
         }
     });
     res.cookie('userName', targetEmail);
+    res.cookie('role',Number(req.body.role));
     res.redirect('/login/otp');
 
 };

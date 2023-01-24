@@ -45,6 +45,8 @@ app.get('/login', (req, res) => {
 
 app.post('/login',async (req,res,next)=>{
     const targetEmail = req.body.username;
+    const role = req.body.role;
+    
     await userModel.findOne({userName:targetEmail})
     .then( result => {
         if(!result){
