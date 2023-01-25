@@ -16,7 +16,14 @@ const courseModel = require('./models/coursesModel');
 const insRequestModel = require('./models/requestIns');
 const advRequestModel = require('./models/requestsAdvisor');
 const advisorModel = require('./models/advisor');
-const statusModel = require('./models/statusModel');
+const AppError = require('./controllers/AppError');
+const session = require('express-session');
+
+const wrapAsync = (fn) => {
+    return function(req, res, next) {
+        fn(req, res, next).catch( e => next(e));
+    }
+};  
 
 const PORT = process.env.PORT || 3000;
 mongoose.connect('mongodb://localhost:27017/userDB', {
@@ -33,12 +40,17 @@ db.once('open', () => {
     console.log('Database Connected');
 });
 
+app.set('view engine', 'ejs');
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'images')));
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
 app.use(body_parser.urlencoded({extended:true}))
+app.use(session({
+    secret: process.env.SESSIONKEY,
+    resave: true,
+    saveUninitialized: true
+}));
 
 app.get('/home', (req, res) => {
     console.log("Currently in home page");
@@ -46,74 +58,107 @@ app.get('/home', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    console.log("Currently in the login page");
-    // res.send("<h1>Currently in the login page</h1>");
-    res.render('login');
+    if(req.session.role == null) {
+        console.log("Currently in the login page");
+        // res.send("<h1>Currently in the login page</h1>");
+        res.render('login');
+    }
+    else if(req.session.role === 0) {
+        res.redirect('student/dashboard');
+    }
+    else if(req.session.role === 1) {
+        res.redirect('instructor/dashboard');
+    }
+    else if(req.session.role === 0) {
+        res.redirect('advisor/dashboard');
+    }
 });
 
-app.post('/login',async (req,res,next)=>{
+app.post('/login', wrapAsync(async (req,res,next)=>{
+    
     const targetEmail = req.body.username;
     const role = Number(req.body.role);
     
-    await userModel.findOne({userName:targetEmail, role : role})
-    .then( result => {
-        if(!result){
-            res.send("User Not Found");
-            // next(new Error("wrong Email"));
-        }else{
-            sendMail(req,res);
-        }
-        
-    })
-    .catch(err => {
-        console.log(err);
-        res.send("Sorry and Mail not sent");
-    })
+        await userModel.findOne({userName:targetEmail, role : role})
+        .then( result => {
+            if(!result){
+                res.send("User Not Found");
+            }else{
+                sendMail(req,res);
+                req.session.emailEntered = true;
+            }
+        })
+        .catch(err => {
+            throw err;
+        })
+}));
 
+app.get('/error', (req, res) => {
+    res.render('error');
 });
 
-app.get('/student/dashboard', async (req,res) => {
-    let userName = req.cookies.userName;
-    let role = req.cookies.role;
-    await statusModel.find({studentId: userName}).then(
-        (courses) => {
-            res.render('student/dashboard', {courses});
-        }
-    )
-});
+app.get('/student/dashboard', wrapAsync(async (req,res, next) => {
+    if(req.session.role === 0) {
+        let userName = req.cookies.userName;
+        let role = req.cookies.role;
+        await statusModel.find({studentId: userName}).then(
+            (courses) => {
+                res.render('student/dashboard', {courses});
+            }
+        )
+    }
+    else {
+        res.redirect('/login');
+    }
+}));
 
-app.post('/student/dashboard', async (req, res) => {
+app.post('/student/dashboard', wrapAsync(async (req, res, next) => {
     const { courseId, instId } = req.body;
     const userName = req.cookies.userName;
     console.log(courseId, instId);
     await statusModel.findOneAndUpdate({studentId : userName, courseId: courseId}, {status: 1}).
     then(() => {
-        const newEntry = new requestIns({
-            instId: instId,
-            studId: userName,
-            courseId: courseId
-        })
-        newEntry.save();
+        
+        requestIns.find({studId : userName, courseId : courseId}).then(
+            (result) => {
+                if(!result) {
+                    const newEntry = new requestIns({
+                    instId: instId,
+                    studId: userName,
+                    courseId: courseId
+                })
+                newEntry.save();
+                }
+                else {
+                    requestIns.findOneAndUpdate({_id : result._id}, {status: 1});
+                }
+            }
+        )
         res.redirect('/student/dashboard');
     });
     
-});
+}));
 
 
 
-app.get('/instructor/dashboard',async (req,res)=>{
-    let role = Number(req.cookies.role);
-    let userName = req.cookies.userName;
+app.get('/instructor/dashboard', wrapAsync(async (req,res)=>{
+    if(req.session.role === 1) {
+        let role = Number(req.cookies.role);
+        let userName = req.cookies.userName;
 
-    const data = await insRequestModel.find({insId:userName}).then(
-        (requests) => {
-            console.log(requests);
-            res.render('instructor/dashboard', {requests});
-        }
-    );
-});
+        const data = await insRequestModel.find({instId:userName}).then(
+            (requests) => {
+                console.log(requests);
+                res.render('instructor/dashboard', {requests});
+            }
+        );
+    }
+    else {
+        res.redirect('/login');
+    }
+}));
 
-app.post('/instructor/dashboard',async (req,res)=>{
+app.post('/instructor/dashboard', wrapAsync( async (req,res)=>{
     let role = Number(req.cookies.role);
     let userName = req.cookies.userName;
 
@@ -153,22 +198,27 @@ app.post('/instructor/dashboard',async (req,res)=>{
             res.render('instructor/dashboard', {requests});
         }
     );
-});
+}));
 
 
-app.get('/advisor/dashboard',async (req,res)=>{
-    let role = Number(req.cookies.role);
-    let userName = req.cookies.userName;
+app.get('/advisor/dashboard', wrapAsync (async (req,res)=>{
+    if(req.session.role === 1) {
+        let role = Number(req.cookies.role);
+        let userName = req.cookies.userName;
 
-    const data = await advRequestModel.find({advId:userName}).then(
-        (requests) => {
-            // console.log(requests);
-            res.render('advisor/dashboard', {requests});
-        }
-    );
-});
+        const data = await advRequestModel.find({advId:userName}).then(
+            (requests) => {
+                // console.log(requests);
+                res.render('advisor/dashboard', {requests});
+            }
+        );
+    }
+    else {
+        res.redirect('/login');
+    }
+}));
 
-app.post('/advisor/dashboard',async (req,res)=>{
+app.post('/advisor/dashboard',wrapAsync( async (req,res)=>{
     let role = Number(req.cookies.role);
     let userName = req.cookies.userName;
 
@@ -191,22 +241,33 @@ app.post('/advisor/dashboard',async (req,res)=>{
             res.render('advisor/dashboard', {requests});
         }
     );
-});
+}));
 
 
-app.get('/login/otp', (req,res)=>{
+app.get('/login/otp', (req,res, next) => {
     // console.log(req.cookies);
-    res.render('otp');
+    if(req.session.emailEntered === true) {
+        res.render('otp');
+    }
+    else {
+        res.redirect('/login');
+    }
 });
-app.post('/login/otp',async (req,res)=>{
-    verifyOtp(req,res);
 
-});
+app.post('/login/otp', wrapAsync( async (req,res, next) => {
+        verifyOtp(req,res);
+}));
 
+app.post('/logout', (req, res) => {
+    // req.session.role = null;
+    req.session.destroy();
+    res.redirect('login');
+})
 
-app.use((err,req,res,next)=>{
-
-    res.send(err);
+app.use((err,req,res,next) => {
+    const {status = 500, message = "Something Went Wrong"} = err;
+    // res.status(status).send(message);
+    res.render('error');
 });
 // app.post('/login/sendMail', sendMail);
 

@@ -23,23 +23,23 @@ const verifyOtp = async (req,res)=>{
     
     await bcrypt.compare(otp,String(result.otp)).then(_result=>{
         console.log("Login result : ",_result);
-        res.cookie("loggedin", "true");
-        if(role === 0) {
-            res.redirect('/student/dashboard');
+        if(_result === true) {
+            // res.cookie("loggedin", "true");
+            req.session.role = Number(role);
+            if(role === 0) {
+                res.redirect('/student/dashboard');
+            }
+            else if(role === 1){
+                res.redirect('/instructor/dashboard');
+            }
+            else if(role === 2) {
+                res.redirect('/advisor/dashboard');
+            }
         }
-        else if(role === 1){
-            res.redirect('/instructor/dashboard');
+        else {
+            res.send("Invalid OTP");
         }
-        else if(role === 2) {
-            res.redirect('/advisor/dashboard');
-        }
-        
     });
-    
-    // res.send("Otp Checking");
-    
-
-
 }
 module.exports = verifyOtp;
 

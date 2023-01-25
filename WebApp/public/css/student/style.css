@@ -14,3 +14,11 @@
 .pass-input {
      display: none;
 }
+
+.outerNav {
+    width: 100%;
+}
+
+.navbar {
+    margin-bottom: 2rem;
+}
