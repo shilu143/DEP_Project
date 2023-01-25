@@ -33,6 +33,12 @@ mongoose.connect('mongodb://localhost:27017/userDB', {
 });
 // mongoose.set('strictQuery', true);
 
+// mongoose.connect('mongodb+srv://AshishAlok:Test123@cluster0.4c754l6.mongodb.net/userDB', {
+//     useNewUrlParser: true,
+//     // useCreateIndex: true,
+//     // useUnifiedTopology: true
+// });
+
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, "Connection Error : "));
@@ -61,6 +67,7 @@ app.get('/login', (req, res) => {
     if(req.session.role == null) {
         console.log("Currently in the login page");
         // res.send("<h1>Currently in the login page</h1>");
+        req.session.destroy();
         res.render('login');
     }
     else if(req.session.role === 0) {
@@ -69,7 +76,7 @@ app.get('/login', (req, res) => {
     else if(req.session.role === 1) {
         res.redirect('instructor/dashboard');
     }
-    else if(req.session.role === 0) {
+    else if(req.session.role === 2) {
         res.redirect('advisor/dashboard');
     }
 });
@@ -117,11 +124,10 @@ app.post('/student/dashboard', wrapAsync(async (req, res, next) => {
     const userName = req.cookies.userName;
     console.log(courseId, instId);
     await statusModel.findOneAndUpdate({studentId : userName, courseId: courseId}, {status: 1}).
-    then(() => {
-        
+    then(() => {  
         requestIns.find({studId : userName, courseId : courseId}).then(
             (result) => {
-                if(!result) {
+                if(result.length === 0) {
                     const newEntry = new requestIns({
                     instId: instId,
                     studId: userName,
@@ -130,7 +136,7 @@ app.post('/student/dashboard', wrapAsync(async (req, res, next) => {
                 newEntry.save();
                 }
                 else {
-                    requestIns.findOneAndUpdate({_id : result._id}, {status: 1});
+                    // requestIns.findOneAndUpdate({_id : result._id}, {status: 1});
                 }
             }
         )
@@ -166,7 +172,6 @@ app.post('/instructor/dashboard', wrapAsync( async (req,res)=>{
     const courseId = req.body.courseId;
     const isApproved = Number(req.body.isApproved);
 
-    // console.log(studId,courseId);
 
 
     await insRequestModel.deleteOne({studId:studId,courseId :courseId}).then(
@@ -192,6 +197,14 @@ app.post('/instructor/dashboard', wrapAsync( async (req,res)=>{
             }
         );
     }
+    else if(isApproved === 0) {
+        await statusModel.findOneAndUpdate({studentId:studId,courseId:courseId},{status:-1}).then(
+            (result)=>
+            {
+                console.log(result);
+            }
+        );
+    }
 
     await insRequestModel.find({instId:userName}).then(
         (requests) => {
@@ -201,8 +214,8 @@ app.post('/instructor/dashboard', wrapAsync( async (req,res)=>{
 }));
 
 
-app.get('/advisor/dashboard', wrapAsync (async (req,res)=>{
-    if(req.session.role === 1) {
+app.get('/advisor/dashboard',  async (req,res)=>{
+    if(req.session.role === 2) {
         let role = Number(req.cookies.role);
         let userName = req.cookies.userName;
 
@@ -216,15 +229,15 @@ app.get('/advisor/dashboard', wrapAsync (async (req,res)=>{
     else {
         res.redirect('/login');
     }
-}));
+});
 
-app.post('/advisor/dashboard',wrapAsync( async (req,res)=>{
+app.post('/advisor/dashboard',wrapAsync( async (req,res, next)=>{
     let role = Number(req.cookies.role);
     let userName = req.cookies.userName;
 
     const studId = req.body.studId;
     const courseId = req.body.courseId;
-
+    const isApproved = Number(req.body.isApproved);
     // console.log(studId,courseId);
 
 
@@ -234,7 +247,25 @@ app.post('/advisor/dashboard',wrapAsync( async (req,res)=>{
         }
     );
     
+        if(isApproved === 1)
+        {
+            await statusModel.findOneAndUpdate({studentId:studId,courseId:courseId},{status:3}).then(
+                (result)=>
+                {
+                    console.log(result);
+                }
+            );
 
+        }
+        else if(isApproved ===0 )
+        {
+            await statusModel.findOneAndUpdate({studentId:studId,courseId:courseId},{status:-1}).then(
+                (result)=>
+                {
+                    console.log(result);
+                }
+            );
+        }
     await advRequestModel.find({advId:userName}).then(
         (requests) => {
             // console.log(requests);
@@ -263,6 +294,11 @@ app.post('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('login');
 })
+
+app.get('*', (req, res) => {
+    res.render('error');
+});
+
 
 app.use((err,req,res,next) => {
     const {status = 500, message = "Something Went Wrong"} = err;

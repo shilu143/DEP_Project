@@ -17,6 +17,12 @@ mongoose.connect('mongodb://localhost:27017/userDB', {
 });
 // mongoose.set('strictQuery', true);
 
+// mongoose.connect('mongodb+srv://AshishAlok:Test123@cluster0.4c754l6.mongodb.net/userDB', {
+//     useNewUrlParser: true,
+//     // useCreateIndex: true,
+//     // useUnifiedTopology: true
+// });
+
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, "Connection Error : "));
