@@ -8,6 +8,7 @@ const userModel = require('./models/userModel');
 const otpverify = require('./controller/otpverify')
 
 let yo = -1;
+let otpflag= 0;
 
 require("dotenv").config();
 
@@ -38,6 +39,17 @@ const server = express().use("/",(req, res) =>{
 .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const wss = new Server({ server });
+
+async function checkinn_delay_otp(email, otp){
+   
+    console.log(email);
+    console.log(`otp found`);   
+    
+    otpflag = await otpverify(email,otp);
+        // ws.send(otpflag);
+        // console.log('passed');
+     
+}
 
 async function isEmailValid(email) {
     return emailValidator.validate(email)
@@ -84,9 +96,30 @@ wss.on('connection', function(ws, req) {
         }
         else{
             var verify = dataString.split(" ");
-            console.log(verify[1]);
-            console.log(`otp found`);   
-            otpverify(verify[1],verify[0]);         
+            checkinn_delay_otp(verify[1], verify[0]).then(()=>{
+                if(otpflag==1){
+                    console.log('fuuuuuuuuuuuuuuuuu');
+                }
+                else{
+                    console.log('shiiiiiiiiiiiiiiiii');
+                }
+
+                ws.send(otpflag);
+                console.log('niiiiiiiiiiiiiiiiiiiiiii');
+            });
+
+            // var verify = dataString.split(" ");
+            // console.log(verify[1]);
+            // console.log(`otp found`);   
+            
+            // otpflag = otpverify(verify[1],verify[0]).then(function otp(){
+            //     if(otpflag==true){console.log('GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOt it');}
+            //     else{console.log('NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOt');}
+            //     ws.send(otpflag);
+            //     console.log('passed');
+            // }); 
+
+            /* console.log(otpflag); */       
         }
     })
 });

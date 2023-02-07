@@ -30,11 +30,13 @@ class _LoginState extends State<Login> {
     print('shaurya=${check}');
     if (check == '1') {
       Navigator.of(context).push(PageTransition(
-        type: PageTransitionType.rightToLeftJoined,
-        duration: Duration(milliseconds: 500),
-        reverseDuration: Duration(milliseconds: 500),
-        child: Otp_verifification(email: _message,),
-        childCurrent: widget));
+          type: PageTransitionType.rightToLeftJoined,
+          duration: Duration(milliseconds: 500),
+          reverseDuration: Duration(milliseconds: 500),
+          child: Otp_verifification(
+            email: _message,
+          ),
+          childCurrent: widget));
     }
   }
 
@@ -75,12 +77,27 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+          title: Text(
+            "Voices",
+          ),
+          backgroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(70),
+                  bottomLeft: Radius.circular(70)))),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(50, 0, 50, 0),
         child: Column(
           children: [
             SizedBox(height: 60),
+            Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Logging in as a",
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.bold))),
+            /* SizedBox(height:100,child:Text('Voices')), */
+            SizedBox(height: 5),
             Align(
                 alignment: Alignment.centerLeft,
                 child: Text(widget.text,

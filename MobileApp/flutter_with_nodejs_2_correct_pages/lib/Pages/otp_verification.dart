@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:web_socket_channel/io.dart';
+import './home_page.dart';
+import 'dart:async';
+import 'package:page_transition/page_transition.dart';
+
 
 class Otp_verifification extends StatefulWidget {
   String? email = '';
@@ -11,7 +15,8 @@ class Otp_verifification extends StatefulWidget {
 }
 
 class _Otp_verifificationState extends State<Otp_verifification> {
-  void sendMessage(msg) {
+  String chicc = '';
+  Future<void> sendMessage(msg) async {
     IOWebSocketChannel? channel;
     // We use a try - catch statement, because the connection might fail.
     try {
@@ -26,12 +31,16 @@ class _Otp_verifificationState extends State<Otp_verifification> {
     msg = msg + " " + widget.email;
     channel?.sink.add(msg);
 
+    var completer = Completer();
     channel?.stream.listen((event) {
       if (event!.isNotEmpty) {
         print(event);
+        chicc = event;
         channel!.sink.close();
+        completer.complete();
       }
     });
+    await completer.future;
   }
 
   @override
@@ -58,10 +67,23 @@ class _Otp_verifificationState extends State<Otp_verifification> {
                 print(code);
               },
               //runs when every textfield is filled
-              onSubmit: (String verificationCode) {
+              onSubmit: (String verificationCode) async {
                 print(verificationCode);
 
-                sendMessage(verificationCode);
+                await sendMessage(verificationCode);
+                if (chicc == '1') {
+                  print('succseksful');
+                  
+                  Navigator.of(context).push(PageTransition(
+                      type: PageTransitionType.rightToLeftJoined,
+                      duration: Duration(milliseconds: 500),
+                      reverseDuration: Duration(milliseconds: 500),
+                      child: Homepage(),
+                      childCurrent: widget));
+
+                } else {
+                  print('try again');
+                }
                 /* showDialog(
                     context: context,
                     builder: (context) {
